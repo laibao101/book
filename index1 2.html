@@ -1,0 +1,151 @@
+<!doctype html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<script type="text/javascript">
+
+
+
+
+
+
+
+
+</script>
+</head>
+
+<body>
+
+
+	<div id="myDiv">Right click or Ctrl+click me to get a custom context menu.Click anywhere else to get the default context menu.</div>
+	<ul id="myMenu" style="position:avsolute;visibility:hidden;background-color:sliver">
+		<li><a href="#">第一项</a></li>
+		<li><a href="#">第二项</a></li>
+		<li><a href="#">第三项</a></li>
+	</ul>
+</body>
+<script>
+
+
+
+
+var EventUtil={
+	addHandler:function(element,type,handler){
+		console.log(element);
+		if(element.addEventListener){
+			element.addEventListener(type,handler,false);
+		}else if(element.attachEvent){
+			element.attachEvent("on"+type,handler);
+		}else{
+			element["on"+type]=handler;
+		}
+	},
+	removeHandler:function(element,type,handler){
+		if(element.removeEventListener){
+			element.removeEventListener(type,handler,false);
+		}else if(element.detachEvent){
+			element.detachEvent("on"+type,handler);
+		}else{
+			element["on"+type]=null;
+		}
+	},
+	getEvent:function(event){
+		return event? event:window.event;
+	},
+	getTarget:function(event){
+		return event.target || event.srcElement;
+	},
+	preventDefault:function(){
+		if(event.preventDefault){
+			event.preventDefault();
+		}else{
+			event.returnValue=false;
+		}
+	},
+	stopPropagation:function(event){
+		if(event.stopPropagation){
+			event.stopPropagation();
+		}else{
+			event.cancelBubble=true;
+		}
+	},
+	getRElatedTarget:function(event){
+		if(event.relatedTarget){
+			return event.relatedTarget;
+		}else if(event.toElement){
+			return event.toElement;
+		}else if(event.formElement){
+			return event.formElement;
+		}else{
+			return null;
+		}
+	},
+	getButton:function(event){
+		if(document.implementation.hasFeature("MouseEvents","2.0")){
+			return event.button;
+		}else{
+			switch(event.button){
+				case 0:
+				case 1:
+				case 3:
+				case 5:
+				case 7:
+					return 0;
+				case 2:
+				case 6:
+					return 2;
+				case 4:
+					return 1;
+
+			}
+		}
+	},
+	getWheelDelta:function(event){
+		if(event.wheelDelta){
+			return (client.engine.opera && client.engine.opera < 9.5? -event.wheelDelta : event.wheelDelta );
+		}else{
+			return -event.detail*40;
+		}
+	},
+	getCharCode:function(event){
+		if(typeof event.charCode == "number"){
+			return event.charCode;
+		}else{
+			return event.keyCode;
+		}
+	},
+	isSupported:function(element,pElement){
+		return ("on"+element) in pElement;
+	}
+}
+
+
+
+EventUtil.addHandler(window,"load",function(event){
+
+	var div=document.getElementById("myDiv");
+
+	EventUtil.addHandler(document,"contextmenu",function(event){
+		event=EventUtil.getEvent(event);
+		EventUtil.preventDefault(event);
+
+		var menu=document.getElementById("myMenu");
+		menu.style.left=event.clientX+"px";
+		menu.style.top=event.clientY+"px";
+		menu.style.visibility="visible";
+
+	})
+
+	EventUtil.addHandler(document,"click",function(event){
+		document.getElementById("myMenu").style.visibility="hidden";
+	})
+})
+
+
+
+
+</script>
+
+</html>

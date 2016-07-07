@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<script type="text/javascript" src="index.js"></script>
+
+</head>
+
+<body>
+<div id="output"></div>
+<button id="btn">点击</button>
+
+<div id="myDiv"></div>
+<form action="" >
+	
+</form>
+
+<form action="">
+	<input type="text" name="name" value="dslkafjkl">
+	<input type="button" value="复制" name="copy">
+	<input type="button" value="粘贴" name="paste">
+</form>
+
+<form>
+	<input type"text" name="tel1" id="txtTel1" maxlength="3">
+	<input type"text" name="tel2" id="txtTel2" maxlength="3">
+	<input type"text" name="tel3" id="txtTel3" maxlength="4">
+</form>
+
+<div class="editable" contenteditable style="border:1px solid red">&nbsp</div>
+
+</body>
+
+<script>
+
+var textbox=document.forms[1].elements["name"];
+var copy=document.forms[1].elements["copy"];
+var paste=document.forms[1].elements["paste"];
+
+
+/*	EventUtil.addHandler(textbox,"paste",function(event){
+		console.log(1)
+		event=EventUtil.getEvent(event);
+		var text=EventUtil.getClipboardText(event);
+
+		if(!/^d*s/.test(text)){
+			EventUtil.preventDefault(event);
+		}else{
+			EventUtil.setClipboardText(event,text)
+		}
+	})*/
+
+
+(function(){
+
+	function tabForward(event){
+
+		event=EventUtil.getEvent(event);
+		var target=EventUtil.getTarget(event);
+		if(target.value.length == target.maxLength){
+			var form =target.form;
+			console.log(form)
+			for(var i=0,len=form.elements.length; i<len ;i++){
+				if(form.elements[i]==target){
+					if(form.elements[i+1]){
+						form.elements[i+1].focus();
+					}
+					return;
+				}
+			}
+		}
+	}
+	var textbox1=document.getElementById("txtTel1");
+	var textbox2=document.getElementById("txtTel2");
+	var textbox3=document.getElementById("txtTel3");
+
+	EventUtil.addHandler(textbox1,"keyup",tabForward);
+	EventUtil.addHandler(textbox2,"keyup",tabForward);
+	EventUtil.addHandler(textbox3,"keyup",tabForward);
+
+
+})()
+
+
+
+
+
+
+
+
+
+
+
+function handleTouchEvent(event){
+	if(event.touches.length==1){
+		var output=document.getElementById("output");
+		switch(event.type){
+			case "touchstart":
+				output.innerHTML = "Touch started (" + event.touches[0].clientX + " , " + event.touches[0].clientY + ")";
+				break;
+			case "touchend":
+				output.innerHTML += "<br> Touch ended (" + event.changedTouches[0].clientX + " , " + event.changedTouches[0].clientY + ")";
+				break;
+			case "touchmove":
+				event.preventDefault();
+				output.innerHTML += "<br> Touch moved (" + event.changedTouches[0].clientX + " , " + event.changedTouches[0].clientY + ")";
+				break;
+			case "gesturestart":
+				output.innerHTML += "<br> gesture started ( rotation=" + event.rotation + " , scale=" + event.scale + ")";
+				break;
+			case "gestureend":
+				output.innerHTML += "<br> gesture ended ( rotation=" + event.rotation + " , scale=" + event.scale + ")";
+			break;
+			case "gesturechange":
+				output.innerHTML += "<br> gesture changed ( rotation=" + event.rotation + " , scale=" + event.scale + ")";
+				break;
+		}
+	}
+}
+/*
+EventUtil.addHandler( document, "touchstart" , handleTouchEvent)
+EventUtil.addHandler( document, "touchend" , handleTouchEvent)
+EventUtil.addHandler( document, "touchmove" , handleTouchEvent)
+*/
+
+
+
+</script>
+
+</html>

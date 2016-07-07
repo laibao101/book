@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="index1.js"></script>
+	<script type="text/javascript" src="index.js"></script>
+</head>
+<body>
+	<div class="draggable" style="position:absolute;background: red;width:100px;height:100px;"></div>
+	<div class="draggable" style="position:absolute;background: blue;width:100px;height:100px;"></div>
+	<div id="status"></div>
+</body>
+
+<script type="text/javascript">
+/*
+function handleMessage(event){
+	alert( "Message received: " + event.message);
+}
+
+var target=new EventTarget();
+target.addHandler("message",handleMessage);
+
+target.fire({type:"message",message:"hello laowang"});
+
+target.removeHandler("message",handleMessage);
+
+target.fire({type:"message",message:"hello xiaowang"});*/
+/*
+function Person(name,age){
+	EventTarget.call(this);
+	this.name=name;
+	this.age=age;
+}
+
+//inheritPrototype(Person,EventTarget);
+Person.prototype=new EventTarget();
+
+Person.prototype.say=function(message){
+	this.fire({type:"message",message:message});
+
+}
+
+function handleMessage(event){
+	console.log(event);
+	alert(event.target.name+"says: " + event.message);
+
+}
+
+var person=new Person("Nicholas",29);
+
+person.addHandler("message",handleMessage);
+
+person.say("hi there");*/
+
+
+var DragDrop=function(){
+	var dragging =null;
+	var diffX=0;
+	var diffY=0;
+	var dragdrop= new EventTarget();
+	function handleEvent(event){
+		event= EventUtil.getEvent(event);
+		var target=EventUtil.getTarget(event);
+		switch(event.type){
+			case "mousedown":
+			console.log("mousedown")
+				if(target.className.indexOf("draggable") > -1){
+					dragging=target;
+					diffX=event.clientX-target.offsetLeft;
+					diffY=event.clientY-target.offsetTop;
+					dragdrop.fire({type:"dragstart",target:dragging,x:event.clientX,y:event.clientY});
+				}
+				break;
+			case "mousemove":
+				if(dragging !== null){
+					dragging.style.left=(event.clientX - diffX )+"px";
+					dragging.style.top=(event.clientY -diffY )+"px";
+					dragdrop.fire({type:"drag",target:dragging,x:event.clientX,y:event.clientY});
+				}
+				console.log("mousemove");
+				break;
+			case "mouseup":
+				dragdrop.fire({type:"dragend",target:dragging,x:event.clientX,y:event.clientY});
+				dragging=null;
+				break;
+		}
+	};
+
+	// return {
+	// 	enable:function(){
+	// 		EventUtil.addHandler(document,"mousedown",handleEvent);
+	// 		EventUtil.addHandler(document,"mousemove",handleEvent);
+	// 		EventUtil.addHandler(document,"mouseup",handleEvent);
+	// 	},
+	// 	disable:function(){
+	// 		EventUtil.removeHandler(document,"mousedown",handleEvent);
+	// 		EventUtil.removeHandler(document,"mousemove",handleEvent);
+	// 		EventUtil.removeHandler(document,"mouseup",handleEvent);
+	// 	}
+	// }
+
+	dragdrop.enable=function(){
+		EventUtil.addHandler(document,"mousedown",handleEvent);
+		EventUtil.addHandler(document,"mousemove",handleEvent);
+		EventUtil.addHandler(document,"mouseup",handleEvent);
+	};
+
+	dragdrop.disable=function(){
+		EventUtil.removeHandler(document,"mousedown",handleEvent);
+		EventUtil.removeHandler(document,"mousemove",handleEvent);
+		EventUtil.removeHandler(document,"mouseup",handleEvent);
+	};
+
+	return dragdrop;
+
+}();
+
+ DragDrop.enable();
+                        
+        DragDrop.addHandler("dragstart", function(event){
+            var status = document.getElementById("status");
+            status.innerHTML = "Started dragging " + event.target.id;
+        });
+        
+        DragDrop.addHandler("drag", function(event){
+            var status = document.getElementById("status");
+            status.innerHTML += "<br>Dragged " + event.target.id + " to (" + event.x + "," + event.y + ")";
+        });
+        
+        DragDrop.addHandler("dragend", function(event){
+            var status = document.getElementById("status");
+            status.innerHTML += "<br>Dropped " + event.target.id + " at (" + event.x + "," + event.y + ")";
+        });
+
+</script>
+
+</html>
